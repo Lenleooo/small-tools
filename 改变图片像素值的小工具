@@ -1,0 +1,20 @@
+import cv2 as cv
+
+path = "D:\FirefoxDownload\TongeImageDataset-master\TongeImageDataset/test3\label/75.png"
+img = cv.imread(path)
+img =  cv.cvtColor(img, cv.COLOR_RGB2GRAY)
+
+print(img.shape)
+
+for i in range(img.shape[0]):
+    for j in range(img.shape[1]):
+        #print(img[row][col])
+        if img[i][j] == 255:
+            img[i][j] = 0
+            #print(img[row][col])
+        else:
+            img[i][j] = 255
+            #print(img[row][col])
+print(img.shape)
+cv.imwrite("D:\FirefoxDownload\TongeImageDataset-master\TongeImageDataset/test3\label/75.png",img)
+#54,68,75
