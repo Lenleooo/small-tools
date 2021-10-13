@@ -1,0 +1,13 @@
+import cv2
+import os
+
+path = "D:\FirefoxDownload\TongeImageDataset-master\TongeImageDataset/train3\label"
+
+img = os.listdir(path)
+#print(img.shape)
+g = 0
+for i in (img):
+    print(i)
+    os.rename(os.path.join(path, i), os.path.join(path , str(g)+".png"))
+    g += 1
+
