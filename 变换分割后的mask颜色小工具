@@ -1,27 +1,15 @@
-
-
-import json
-import random
-
-import cv2
 import numpy as np
 import os
-from keras.layers import Concatenate, Lambda
-from keras import backend as K
-import tensorflow as tf
-from keras.layers import add
 import cv2
 from PIL import Image
 
-
-K.set_floatx('float64')
 
 color_dict = {"black": [0, 0, 0],"pink": [255, 192, 203],
                 #"red": [220, 220,0], #0
                 #"red": [0, 200,200], #22
                 #"red": [0, 200,0], #22
                  #"red": [60, 60,125],#39
-                "red": [220, 220,0], #51
+                "red": [200, 0,150], #51
               }
 def gray2rgb(gray, color_dict):
 
@@ -47,28 +35,37 @@ def gray2rgb(gray, color_dict):
 
 
 def blend_two_images():
-    img1 = Image.open("E:\Mobile-deeplabv3-mobile\data\membrane/test2/222.png")
+    img1 = Image.open("E:\Mobile-deeplabv3-mobile\data\membrane/test2/222.png")  #原图片路径
     img1 = img1.convert('RGBA')
-    img2 = Image.open("data/membrane/mask_result/222_label.png")
+    img2 = Image.open("D:\FirefoxDownload\TongeImageDataset-master\TongeImageDataset/222.png")  #上了色的标签图片路径
     img2 = img2.convert('RGBA')
 
     img = Image.blend(img1, img2, 0.4)
     img.show()
-    img.save("data/membrane/mask_result/222.png")
+    img.save("D:\FirefoxDownload\TongeImageDataset-master\TongeImageDataset/222.png")
 
     return
 
 if __name__ == '__main__':
+    #=======================================给标签上色============================================#
     p = os.getcwd()
     k = 23
-    path = os.path.join(p, "data\membrane\mask_results(proposed-datset2)/%k_predict.png")###########
+    #path = os.path.join(p, "data\membrane\mask_results(proposed-datset2)/222_predict.png")###########
+    path = "E:\Mobile-deeplabv3-mobile\data\membrane\mask_results(proposed-datset2)/222_predict.png"   #######需要上色的标签路径
 
     img = cv2.imread(path)
     img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     img = np.array(img, dtype='int32')
     img = gray2rgb(img, color_dict)
 
-    cv2.imwrite('data/membrane/mask_result/222_label.png', img)  ######
+    cv2.imwrite('D:\FirefoxDownload\TongeImageDataset-master\TongeImageDataset/222.png', img)  ########将上色的标签保存到此路径
+    # =======================================给标签上色============================================#
 
-
+    # =======================================将上了色的标签混合到原图上============================================#
     blend_two_images()
+    # =======================================将上了色的标签混合到原图上============================================#
+
+
+
+
+
