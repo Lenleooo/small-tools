@@ -1,0 +1,49 @@
+
+# ! /usr/bin/env python
+# -*- coding: utf-8 -*-
+# ! python3
+import cv2
+import numpy as np
+#import pandas as pd
+#for g in range(0,400):
+# for g in range(0,502):
+for g in range(0,200):   #改地址
+  img1 = "E:\Mobile-deeplabv3-mobile\data\membrane/train3\image/%g.png" % g   
+  img2 = "E:\Mobile-deeplabv3-mobile\data\membrane/train3\label/%g.png" % g
+  #img2 = "E:\Mobile-deeplabv3-mobile\data\membrane/train3\label/%g.png" % g
+
+  img1 = cv2.imread(img1)
+  print(img1.shape)
+  img1 = cv2.resize(img1,(256,256))
+  img1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
+  img1 = np.array(img1)
+
+  img2 = cv2.imread(img2)
+  img2 = cv2.resize(img2,(256,256))
+  img2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
+  img2 = np.array(img2)
+  ans =  [[0 for col in range(256)] for row in range(256)]
+
+# #===============只割出舌头
+  for i in range (0,256):
+    for j in range (0,256):
+      if img2[i][j] == 0:
+        ans[i][j]= img2[i][j]
+      else:
+      #elif img2[i][j] == 1:
+        ans[i][j]= img1[i][j]
+# #===============舌头
+
+#===============只割出背景
+  # for i in range(0, 256):
+  #   for j in range(0, 256):
+  #     if img1[i][j] > 200:
+  #       ans[i][j] = 0
+  #     elif img2[i][j] == 1:
+  #       ans[i][j] = img2[i][j]
+  #     elif img2[i][j] == 0:
+  #       ans[i][j] = img1[i][j]
+  # ===============背景
+  #ans = cv2.cvtColor(ans, cv2.COLOR_GRAY2BGR)
+  ans = np.array(ans)
+  cv2.imwrite("D:\Anaconda\envs/01FCN\merge5/%g.png" % g, ans)
