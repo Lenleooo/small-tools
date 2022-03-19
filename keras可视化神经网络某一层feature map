@@ -1,0 +1,47 @@
+from deeplabv3 import *
+import matplotlib.pyplot as plt
+from keras import backend as K
+
+
+from keras import backend as K
+from keras.models import load_model
+from matplotlib import pyplot as plt
+import cv2
+import numpy as np
+
+def main():
+    model = Deeplabv3(input_shape=(256, 256, 3), bone_name='mobilenetv3')
+    model.load_weights('E:\Mobile-deeplabv3-mobile\mobilev3_deeplbv3.hdf5')  #改
+    model.summary()
+    images=cv2.imread("E:\Mobile-deeplabv3-mobile\data\membrane/test2/4.png")  #改
+    # cv2.imshow("Image", images)
+    cv2.waitKey(0)
+
+    # Turn the image into an array.
+    # 根据载入的训练好的模型的配置，将图像统一尺寸
+    image_arr = cv2.resize(images, (256, 256))
+
+    image_arr = np.expand_dims(image_arr, axis=0)
+
+    # 第一个 model.layers[0],不修改,表示输入数据；
+    # 第二个model.layers[ ],修改为需要输出的层数的编号[]
+    layer_1 = K.function([model.layers[0].input], [model.layers[241].output])  #改网络的层数
+#61入，
+    # 只修改inpu_image
+    f1 = layer_1([image_arr])[0]
+#12最开始的，
+    # 第一层卷积后的特征图展示，输出是（1,66,66,32），（样本个数，特征图尺寸长，特征图尺寸宽，特征图个数）
+
+    for ii in range(36):    #36个子图
+                show_img = f1[:, :, :, ii]
+                show_img.shape = [8,8]  #根据网络结构改feature map 的大小
+                plt.subplot(6,6, ii + 1)  #几行几列展示
+                plt.imshow(show_img, cmap='CMRmap_r')  #CMRmap_r模式
+                #plt.imshow(show_img, cmap='gray')
+                plt.axis('off')
+                #cv2.imwrite("E:\Mobile-deeplabv3-mobile\ASPPlast/%ii.png" %ii, show_img)
+
+    plt.show()
+
+if __name__ == '__main__':
+    main()
