@@ -1,0 +1,20 @@
+import cv2
+
+import os
+
+tif_path = 'D:\Anaconda\envs\Retinal-Vessel-Segmentation-ISBI2022\Retinal-Vessel-Segmentation-ISBI2022\ISBI_2022_retinal/retinal_dataset\DRIVE/test_data/'
+
+jpg_path = 'D:\Anaconda\envs\Retinal-Vessel-Segmentation-ISBI2022\Retinal-Vessel-Segmentation-ISBI2022\ISBI_2022_retinal/retinal_dataset\DRIVE/test_data/'
+
+imgs = os.listdir(tif_path)
+
+for i, img in enumerate(imgs):
+    img_name = os.path.join(tif_path, img)
+
+    file = cv2.imread(img_name, 1)
+
+    save_file = os.path.join(jpg_path, img.strip('.tif') + '.png')
+
+    cv2.imwrite(save_file, file)
+
+    print(i)
