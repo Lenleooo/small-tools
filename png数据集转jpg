@@ -1,0 +1,7 @@
+from glob import glob
+import cv2
+pngs = glob('D:\Anaconda\envs\DCVR\Discriminative-and-Compact-Vein-Recognition-Model\datasets\HDV/trainA/*.png')  #数据集路径
+
+for j in pngs:
+    img = cv2.imread(j)
+    cv2.imwrite(j[:-3] + 'jpg', img)
