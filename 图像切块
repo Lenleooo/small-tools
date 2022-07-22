@@ -1,0 +1,109 @@
+import numpy as np
+import cv2
+import os
+from PIL import Image
+
+def mkdir(path):
+    folder = os.path.exists(path)
+    if not folder:
+        os.makedirs(path)
+
+def cut_img(img, nums, cut_size, overlap_factor):
+    # factor = int(np.sqrt(num))
+    w_num = nums[0]+2
+    h_num = nums[1]+2
+    ws = img.shape[1]
+    hs = img.shape[0]
+    
+    imgrsz = Image.fromarray(img)
+    # 对resize完的图像进行横纵分块：
+    img_stacks = []
+    for j in range(w_num-4):
+        for i in range(h_num-4):
+            left = i * (cut_size - overlap_factor)
+            # print("left=",left)
+            # print("left+ cut_size=",left+ cut_size)
+            if left < 0:
+                left = 0
+            up = j * (cut_size - overlap_factor)
+            # print("up =",up )
+            # print("up + cut_size=",up + cut_size)
+            # print("=======================")
+            if up < 0:
+                up = 0
+
+            # if (left + cut_size <= ws) and (up + cut_size<= hs):
+            region = img[up:up + cut_size, left:left + cut_size]
+
+            img_stacks.append(region)
+
+    return img_stacks, imgrsz
+
+    i,j=0,0
+
+    label_stacks  = []
+    for j in range(w_num - 4):
+        for i in range(h_num - 4):
+            left = i * (cut_size - overlap_factor)
+
+            if left < 0:
+                left = 0
+            up = j * (cut_size - overlap_factor)
+            if up < 0:
+                up = 0
+            # if (left + cut_size <= ws) and (up + cut_size <= hs):
+            region = img[up:up + cut_size, left:left + cut_size]
+            label_stacks.append(region)
+
+    return label_stacks, imgrsz
+
+#print(int(3.08))
+path = "D:\Anaconda\envs\LadderNet-master_dd\DRIVE/training\images_/"  #所有待切块的图片
+save = "D:\Anaconda\envs\DD_Unet\data\img/"   #切块后的切片保存地址
+save_path_label = "D:\Anaconda\envs\DD_Unet\data\label/"  #切块后的标签保存地址
+
+for file in os.listdir(path):
+    file_path = path + file
+    label_path = "D:\Anaconda\envs\LadderNet-master_dd\DRIVE/training/1st_manual_/" + file
+    save_path = save + file.split(".")[0]+ "_"
+    save_label = save_path_label + file.split(".")[0]+ "_"
+
+    #mkdir(save_path)
+    #mkdir(resize_path)
+
+    overlap_step = 512-128  # 重叠的像素点数（切块大小/滑动步长）
+    cut_size = 512          # 切块大小
+
+    srcimg = Image.open(file_path).convert('RGB')
+    srclabel = Image.open(label_path).convert('RGB')
+    img = np.array(srcimg)
+    label = np.array(srclabel)
+
+    w_p = int(img.shape[0]/128)
+    h_p = int(img.shape[1]/128)
+
+    num = [w_p, h_p]  # 裁剪成w_p*h_p块
+
+    img = np.pad(img, ((0, (num[0] + 1) * 128 - img.shape[0]), (0, (num[1] + 1) * 128 - img.shape[1]), (0, 0)), 'maximum')          # pad255（便于滑动切块）
+    label = np.pad(label, ((0, (num[0] + 1) * 128 - label.shape[0]), (0, (num[1] + 1) * 128 - label.shape[1]), (0, 0)), 'minimum')  # pad0（便于滑动切块）
+
+    img_stacks, img_resize = cut_img(img, num, cut_size, overlap_step)
+    label_stacks, img_resize = cut_img(label, num, cut_size, overlap_step)
+
+    for i in range(len(img_stacks)):
+        img_i = img_stacks[i]
+        label_i = label_stacks[i]
+        cal = 0
+
+        try:
+            image_pil = Image.fromarray(img_i)
+            w,h=image_pil.size
+            if w == cut_size and h == cut_size:
+                image_pil.save(save_path + str(i + 1).zfill(2) + ".png")
+            label_pil = Image.fromarray(label_i)
+            w2, h2 = label_pil.size
+            if w2 == cut_size and h2 == cut_size:
+                label_pil.save(save_label + str(i + 1).zfill(2) + ".png")
+        except OSError:
+            pass
+        continue
