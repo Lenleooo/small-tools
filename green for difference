@@ -1,0 +1,64 @@
+import cv2
+import os
+import  numpy as np
+from PIL import Image
+
+ladder_path = "K:\ex_result\state-of-the-art/nopretrain\imgyd233_R3_1_t/mask.png"
+
+
+# proposed_path = "K:\ex_result\state-of-the-art/nopretrain\imgyd233_R3_1_t/att.png"
+# proposed_path = "K:\ex_result\state-of-the-art/nopretrain\imgyd233_R3_1_t/ce.png"
+# proposed_path = "K:\ex_result\state-of-the-art/nopretrain\imgyd233_R3_1_t/pro.png"
+# proposed_path = "K:\ex_result\state-of-the-art/nopretrain\imgyd233_R3_1_t/seg.png"
+# proposed_path = "K:\ex_result\state-of-the-art/nopretrain\imgyd233_R3_1_t/fcn.png"
+proposed_path = "K:\ex_result\state-of-the-art/nopretrain\imgyd233_R3_1_t/unet.png"
+
+lad = cv2.imread(ladder_path)
+lad1 = lad[:,:,0]
+pro = cv2.imread(proposed_path)
+pro1 = pro[:,:,0]
+
+# lad2 = lad[:,:,1]
+# pro = cv2.imread(proposed_path)
+# pro2 = pro[:,:,1]
+#
+# lad3 = lad[:,:,2]
+# pro = cv2.imread(proposed_path)
+# pro3 = pro[:,:,2]
+
+print(lad.shape)
+print(lad.shape[0]) #4297
+print(pro.shape)
+
+row = lad1.shape[0]
+col = lad1.shape[1]
+# arr = np.ones((row,col,3))*0
+arr = pro
+
+print('==',arr.shape)
+
+for i in range(lad1.shape[0]):
+    for j in range(lad1.shape[1]):
+        if lad1[i][j] == pro1[i][j] and lad1[i][j]!=0:  #255
+            arr[i][j][0] = 255
+            arr[i][j][1] = 255
+            arr[i][j][2] = 255
+        elif lad1[i][j] == pro1[i][j] and lad1[i][j]==0:  #0
+            arr[i][j][0] = 0
+            arr[i][j][1] = 0
+            arr[i][j][2] = 0
+        else:
+            arr[i][j][0] = 0
+            arr[i][j][1] = 255
+            arr[i][j][2] = 0
+
+
+# cv2.imwrite("K:\ex_result\state-of-the-art/nopretrain\imgyd233_R3_1_t/resu_att.png",arr)
+# cv2.imwrite("K:\ex_result\state-of-the-art/nopretrain\imgyd233_R3_1_t/resu_ce.png",arr)
+# cv2.imwrite("K:\ex_result\state-of-the-art/nopretrain\imgyd233_R3_1_t/resu_pro.png",arr)
+# cv2.imwrite("K:\ex_result\state-of-the-art/nopretrain\imgyd233_R3_1_t/resu_seg.png",arr)
+# cv2.imwrite("K:\ex_result\state-of-the-art/nopretrain\imgyd233_R3_1_t/resu_fcn.png",arr)
+cv2.imwrite("K:\ex_result\state-of-the-art/nopretrain\imgyd233_R3_1_t/resu_unet.png",arr)
+
+
+
